@@ -17,7 +17,7 @@ interface BookingModalProps {
 export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModalProps) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<SeatClass>('economy');
+  const [selectedClass, setSelectedClass] = useState<SeatClass | null>(null);
 
   if (!flight) return null;
 
@@ -200,7 +200,9 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
             <span className="text-white font-semibold">Total Price</span>
           </div>
           <span className="text-2xl font-bold text-white">
-            {formatCurrency(selectedClassData?.price || flight.economy_price)}
+            {selectedClass && selectedClassData
+              ? formatCurrency(selectedClassData.price)
+              : '—'}
           </span>
         </div>
 
@@ -217,9 +219,10 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
           <Button
             onClick={handleConfirmBooking}
             isLoading={isLoading}
+            disabled={!selectedClass || isLoading}
             className="flex-1"
           >
-            Confirm Booking
+            {selectedClass ? 'Confirm Booking' : 'Select a Seat Class'}
           </Button>
         </div>
 
